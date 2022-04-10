@@ -4,10 +4,10 @@ WORKDIR /app
 # Install Petabridge.Cmd client so it can be invoked remotely via
 # Docker or K8s 'exec` commands
 RUN dotnet tool install --global pbm 
-
+RUN dotnet publish "src/Lighthouse/Lighthouse.csproj" -c Release -o /apps/publish
 # RUN pbm help
 
-COPY ./bin/Release/netcoreapp3.1/publish/ /app
+COPY ./apps/publish /app
 
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS app
 WORKDIR /app
