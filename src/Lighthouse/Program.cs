@@ -25,7 +25,7 @@ namespace Lighthouse
                 var taskIdSplit = metadata["TaskARN"].ToString().Split("/");
                 var taskId = taskIdSplit[taskIdSplit.Length - 1];
                 Environment.SetEnvironmentVariable("CLUSTER_IP", $"{taskId}.lighthouse.batch-import-system");
-                Environment.SetEnvironmentVariable("CLUSTER_SEED", $"akka.tcp://document-transactional-system@{taskId}.lighthouse.batch-import-system:4053");
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", $"akka.tcp://document-transactional-system@{taskId}.lighthouse.batch-import-system:4053");
            }
             var lighthouseService = new LighthouseService();
             lighthouseService.Start();
