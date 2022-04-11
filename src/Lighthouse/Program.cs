@@ -12,7 +12,6 @@ namespace Lighthouse
 {
     public partial class Program
     {
-#if CORECLR
         public static void Main(string[] args)
         {
             string metadataString = string.Empty;
@@ -33,6 +32,5 @@ namespace Lighthouse
             Console.CancelKeyPress += async (sender, eventArgs) => { await lighthouseService.StopAsync(); };
             lighthouseService.TerminationHandle.Wait();
         }
-#endif
     }
 }

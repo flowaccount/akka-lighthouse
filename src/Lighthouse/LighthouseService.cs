@@ -44,7 +44,7 @@ namespace Lighthouse
             _lighthouseSystem = LighthouseHostFactory.LaunchLighthouse(_ipAddress, _port, _actorSystemName);
             var pbm = PetabridgeCmd.Get(_lighthouseSystem);
             pbm.RegisterCommandPalette(ClusterCommands.Instance); // enable Akka.Cluster management commands
-            pbm.RegisterCommandPalette(RemoteCommands.Instance); // enable Akka.Remote management commands
+            pbm.RegisterCommandPalette(new RemoteCommands()); // enable Akka.Remote management commands
             pbm.Start();
         }
 

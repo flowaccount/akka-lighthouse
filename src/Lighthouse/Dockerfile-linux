@@ -1,18 +1,18 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS base
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS base
 
+WORKDIR /app
+# WORKDIR /mnt/d/projects/opensource/lighthouse/src/Lighthouse
 # Install Petabridge.Cmd client so it can be invoked remotely via
 # Docker or K8s 'exec` commands
+
 RUN dotnet tool install --global pbm 
-RUN dotnet publish "src/Lighthouse/Lighthouse.csproj" -c Release -o /apps/publish
-# RUN pbm help
+COPY ./ ./
+RUN dotnet build "./Lighthouse.csproj" -c Release -o /app/publish
 
-COPY ./apps/publish /app
-
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS app
+FROM mcr.microsoft.com/dotnet/runtime:5.0-focal AS app
 WORKDIR /app
 
-COPY --from=base /app /app
+COPY --from=base ./app/publish /app
 
 # copy .NET Core global tool
 COPY --from=base /root/.dotnet /root/.dotnet/
@@ -28,7 +28,7 @@ ENV AKKA__CLUSTER__SPLIT_BRAIN_RESOLVER__ACTIVE_STRATEGY "keep-majority"
 ENV AKKA__REMOTE__DOT-NETTY__TCP__BATCHING__ENABLED "false"
 
 # 9110 - Petabridge.Cmd
+
 # 4053 - Akka.Cluster
 EXPOSE 9110 4053
-
 CMD ["dotnet", "Lighthouse.dll"]
