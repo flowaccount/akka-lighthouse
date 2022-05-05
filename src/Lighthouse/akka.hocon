@@ -17,7 +17,7 @@ akka {
   actor {
         provider = "Akka.Cluster.ClusterActorRefProvider, Akka.Cluster"
 		
-	  serializers {
+	serializers {
 			hyperion = "Akka.Serialization.HyperionSerializer, Akka.Serialization.Hyperion"
 			akka-pubsub = "Akka.Cluster.Tools.PublishSubscribe.Serialization.DistributedPubSubMessageSerializer, Akka.Cluster.Tools"
 			akka-cluster-client = "Akka.Cluster.Tools.Client.Serialization.ClusterClientMessageSerializer, Akka.Cluster.Tools"
