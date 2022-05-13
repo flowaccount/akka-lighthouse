@@ -24,8 +24,12 @@ namespace Lighthouse
                 var metadata = JObject.Parse(metadataString);
                 var taskIdSplit = metadata["TaskARN"].ToString().Split("/");
                 var taskId = taskIdSplit[taskIdSplit.Length - 1];
-                Environment.SetEnvironmentVariable("CLUSTER_IP", $"{taskId}.lighthouse.batch-import-system");
-                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", $"akka.tcp://document-transactional-system@{taskId}.lighthouse.batch-import-system:4053");
+
+                var hostname = Environment.GetEnvironmentVariable("AKKA__CLUSTER__DNS");
+                hostname = string.IsNullOrEmpty(hostname) ? "batch-import-system" : hostname;
+
+                Environment.SetEnvironmentVariable("CLUSTER_IP", $"{taskId}.lighthouse.{hostname}");
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", $"akka.tcp://document-transactional-system@{taskId}.lighthouse.{hostname}:4053");
            }
             var lighthouseService = new LighthouseService();
             lighthouseService.Start();
