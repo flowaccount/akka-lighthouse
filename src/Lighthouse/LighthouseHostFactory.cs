@@ -65,6 +65,13 @@ namespace Lighthouse
                 var remoteConfig = $"akka.remote.dot-netty.tcp.public-hostname = {taskId}.{subdomainName}.{publicHostname}\n";
                 clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
                     .WithFallback(clusterConfig);
+
+                var configuredPort = clusterConfig.GetValue("akka.remote.dot-netty.tcp.port").GetInt();
+                var pport = metadata["Containers"][0]["Ports"].Where(portConfig => portConfig["ContainerPort"].ToString() == configuredPort.ToString()).Select(portConfig => portConfig["HostPort"] ).FirstOrDefault().ToString();
+                Console.WriteLine("Setting the public-port variable: " + $"{taskId}.{pport}");
+                var publicPortConfig = $"akka.remote.dot-netty.tcp.public-port = {pport}\n";
+                clusterConfig = ConfigurationFactory.ParseString(publicPortConfig)
+                    .WithFallback(clusterConfig);
            }
 
             // Values from method arguments should always win
