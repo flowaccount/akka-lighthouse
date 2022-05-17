@@ -32,14 +32,14 @@ namespace Lighthouse
             if (specifiedPort != null)
                 argConfig += $"akka.remote.dot-netty.tcp.port = {specifiedPort}";
 
-            var useDocker = !(IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_IP")?.Trim()) ||
-                             IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim()));
+            // var useDocker = !(IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_IP")?.Trim()) ||
+            //                  IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim()));
 
             var clusterConfig = ConfigurationFactory.ParseString(File.ReadAllText("akka.hocon"));
 
             // If none of the environment variables expected by Akka.Bootstrap.Docker are set, use only what's in HOCON
-            if (useDocker)
-                clusterConfig = clusterConfig.BootstrapFromDocker();
+            // if (useDocker)
+            //     clusterConfig = clusterConfig.BootstrapFromDocker();
 
             // Use ecs metadata and service discovery
             string metadataString = string.Empty;
@@ -67,10 +67,9 @@ namespace Lighthouse
                     .WithFallback(clusterConfig);
 
                 // TODO: Read this from meta-data files
-                var clusterSeeds = $"akka.cluster.seed-nodes = [\"akka.tcp://${systemName}@{taskId}.{subdomainName}.{publicHostname}:{specifiedPort}\"]\n";
-                clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
-                    .WithFallback(clusterConfig);
-
+                // var clusterSeeds = $"akka.cluster.seed-nodes = [\"akka.tcp://${systemName}@{taskId}.{subdomainName}.{publicHostname}:{specifiedPort}\"]\n";
+                // clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
+                //     .WithFallback(clusterConfig);
 
                 // var configuredPort = clusterConfig.GetValue("akka.remote.dot-netty.tcp.port").GetInt();
                 // var pport = metadata["Containers"][0]["Ports"].Where(portConfig => portConfig["ContainerPort"].ToString() == configuredPort.ToString()).Select(portConfig => portConfig["HostPort"] ).FirstOrDefault().ToString();
