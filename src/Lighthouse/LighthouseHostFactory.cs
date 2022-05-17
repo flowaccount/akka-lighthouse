@@ -7,9 +7,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Configuration;
+using Newtonsoft.Json.Linq;
 using static System.String;
 
 namespace Lighthouse
@@ -23,7 +25,7 @@ namespace Lighthouse
             string systemName = null)
         {
             systemName = systemName ?? Environment.GetEnvironmentVariable("ACTORSYSTEM")?.Trim();
-
+            var publicHostname = Environment.GetEnvironmentVariable("AKKA__CLUSTER__DNS")?.Trim();
             var argConfig = "";
             if (ipAddress != null)
                 argConfig += $"akka.remote.dot-netty.tcp.public-hostname = {ipAddress}\n";
@@ -38,6 +40,32 @@ namespace Lighthouse
             // If none of the environment variables expected by Akka.Bootstrap.Docker are set, use only what's in HOCON
             if (useDocker)
                 clusterConfig = clusterConfig.BootstrapFromDocker();
+
+            // Use ecs metadata and service discovery
+            string metadataString = string.Empty;
+            var ecsEndpoint = Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4");
+            using (var httpClient = new HttpClient())
+            {
+                var response = httpClient.GetAsync(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") + "/taskWithTags").Result;
+                metadataString = response.Content.ReadAsStringAsync().Result;
+                Console.WriteLine("ECS Metadata: " + metadataString);
+                var metadata = JObject.Parse(metadataString);
+                var taskIdSplit = metadata["TaskARN"].ToString().Split("/");
+                var taskId = taskIdSplit[taskIdSplit.Length - 1];
+                
+                publicHostname = string.IsNullOrEmpty(publicHostname) ? "batch-import-system" : publicHostname;
+
+                var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Trim().ToLowerInvariant();
+                var subdomainName = string.IsNullOrEmpty(environment) ? "lighthouse": $"lighthouse-{environment}";
+
+                var remoteIpConfig = $"akka.remote.dot-netty.tcp.hostname = 0.0.0.0\n";
+                clusterConfig = ConfigurationFactory.ParseString(remoteIpConfig)
+                    .WithFallback(clusterConfig);
+
+                var remoteConfig = $"akka.remote.dot-netty.tcp.public-hostname = {taskId}.{subdomainName}.{publicHostname}\n";
+                clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
+                    .WithFallback(clusterConfig);
+           }
 
             // Values from method arguments should always win
             if (!IsNullOrEmpty(argConfig))

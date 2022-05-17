@@ -14,23 +14,7 @@ namespace Lighthouse
     {
         public static void Main(string[] args)
         {
-            string metadataString = string.Empty;
-            var ecsEndpoint = Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4");
-            using (var httpClient = new HttpClient())
-            {
-                var response = httpClient.GetAsync(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") + "/taskWithTags").Result;
-                metadataString = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine("ECS Metadata: " + metadataString);
-                var metadata = JObject.Parse(metadataString);
-                var taskIdSplit = metadata["TaskARN"].ToString().Split("/");
-                var taskId = taskIdSplit[taskIdSplit.Length - 1];
-
-                var hostname = Environment.GetEnvironmentVariable("AKKA__CLUSTER__DNS");
-                hostname = string.IsNullOrEmpty(hostname) ? "batch-import-system" : hostname;
-
-                Environment.SetEnvironmentVariable("CLUSTER_IP", $"{taskId}.lighthouse.{hostname}");
-                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", $"akka.tcp://document-transactional-system@{taskId}.lighthouse.{hostname}:4053");
-           }
+            
             var lighthouseService = new LighthouseService();
             lighthouseService.Start();
             Console.WriteLine("Press Control + C to terminate.");
