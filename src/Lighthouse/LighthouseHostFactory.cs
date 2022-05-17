@@ -56,7 +56,7 @@ namespace Lighthouse
                 publicHostname = string.IsNullOrEmpty(publicHostname) ? "batch-import-system" : publicHostname;
 
                 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Trim().ToLowerInvariant();
-                var subdomainName = !string.IsNullOrEmpty(environment) && environment == "production" ? "lighthouse": $"lighthouse-{environment}";
+                var subdomainName = string.IsNullOrEmpty(environment) || environment == "production" ? "lighthouse": $"lighthouse-{environment}";
 
                 var remoteIpConfig = $"akka.remote.dot-netty.tcp.hostname = 0.0.0.0\n";
                 clusterConfig = ConfigurationFactory.ParseString(remoteIpConfig)
