@@ -61,7 +61,7 @@ namespace Lighthouse
                 var remoteIpConfig = $"akka.remote.dot-netty.tcp.hostname = 0.0.0.0\n";
                 clusterConfig = ConfigurationFactory.ParseString(remoteIpConfig)
                     .WithFallback(clusterConfig);
-
+                Console.WriteLine($"setting subdomain {subdomainName}");
                 var remoteConfig = $"akka.remote.dot-netty.tcp.public-hostname = {taskId}.{subdomainName}.{publicHostname}\n";
                 clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
                     .WithFallback(clusterConfig);
