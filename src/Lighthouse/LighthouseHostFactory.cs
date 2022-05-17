@@ -66,6 +66,12 @@ namespace Lighthouse
                 clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
                     .WithFallback(clusterConfig);
 
+                // TODO: Read this from meta-data files
+                var clusterSeeds = $"akka.cluster.seed-nodes = [\"akka.tcp://${systemName}@{taskId}.{subdomainName}.{publicHostname}:{specifiedPort}\"]\n";
+                clusterConfig = ConfigurationFactory.ParseString(remoteConfig)
+                    .WithFallback(clusterConfig);
+
+
                 // var configuredPort = clusterConfig.GetValue("akka.remote.dot-netty.tcp.port").GetInt();
                 // var pport = metadata["Containers"][0]["Ports"].Where(portConfig => portConfig["ContainerPort"].ToString() == configuredPort.ToString()).Select(portConfig => portConfig["HostPort"] ).FirstOrDefault().ToString();
                 // Console.WriteLine("Setting the public-port variable: " + $"{taskId}.{pport}");
