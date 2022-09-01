@@ -4,7 +4,7 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Akka.Cluster" Version="1.4.35" />
+    <PackageReference Include="Akka.Cluster" Version="1.4.41" />
     <PackageReference Include="Akka.Cluster.Tools" Version="1.4.35" />
     <PackageReference Include="Akka.Serialization.Hyperion" Version="1.4.35" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="5.0.0" />
