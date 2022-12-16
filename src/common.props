@@ -16,7 +16,7 @@ Upgraded to [Petabridge.Cmd v0.8.5](https://cmd.petabridge.com/articles/RELEASE_
   </PropertyGroup>
   <PropertyGroup>
     <XunitVersion>2.4.1</XunitVersion>
-    <MicrosoftSdkVersion>17.1.0</MicrosoftSdkVersion>
+    <MicrosoftSdkVersion>17.4.1</MicrosoftSdkVersion>
     <FluentAssertionsVersion>6.5.1</FluentAssertionsVersion>
     <NetCoreVersion>net5.0</NetCoreVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
